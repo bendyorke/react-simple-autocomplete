@@ -59,5 +59,19 @@
     "webpack": "^1.12.11",
     "webpack-dev-server": "^1.14.1",
     "webpack-hot-middleware": "^2.6.0"
-  }
+  },
+  "keywords": [
+    "react-simple-autocomplete",
+    "simple",
+    "react",
+    "autocomplete",
+    "component",
+    "typeahead",
+    "type",
+    "ahead",
+    "suggestions",
+    "autosuggest",
+    "form",
+    "field"
+  ]
 }
