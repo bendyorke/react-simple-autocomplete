@@ -2,6 +2,21 @@
 
 Simple, customizable, unopinionated autocomplete wrapper for React.
 
+## Installation
+
+npm:
+
+```bash
+$ npm install --save react-simple-autocomplete
+```
+
+npmcdm:
+
+```html
+<!-- <SimpleAutocomplete /> -->
+<script src="//npmcdn.com/react-simple-autocomplete@1.0.0"></script>
+```
+
 ## Demo
 
 [bendyorke.com/react-simple-autocomplete](http://bendyorke.com/react-simple-autocomplete)
@@ -44,7 +59,7 @@ Output with menu open & first item highlighted:
 
 ### Children:
 
-`&lt;Autocomplete />` can accept a single element as a child.  This element can contain nested elements, however the top level element must respond to `#value`.  Any refs applied to the top level child will be overridden, however it can be accessed via `#input`.  Defaults to: `<input type="text" />`
+`<Autocomplete />` can accept a single element as a child.  This element can contain nested elements, however the top level element must respond to `#value`.  Any refs applied to the top level child will be overridden, however it can be accessed via `#input`.  Defaults to: `<input type="text" />`
 
 NOTE: Currently, `onMouseDown`, `onMouseEnter`, and `onClick` are overwritten on the top level child element.  This should be fixed shortly.  `onChange`, however, is free to be used!
 

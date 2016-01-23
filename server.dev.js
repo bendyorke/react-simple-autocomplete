@@ -16,6 +16,12 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler))
 
+app.use('/react-simple-autocomplete', express.static('./'))
+
+app.get('/react-simple-autocomplete', function(req, res) {
+  res.sendFile(path.join(__dirname, 'index.html'))
+})
+
 app.get('*', function(req, res) {
   res.sendFile(path.join(__dirname, 'dev.html'))
 })
