@@ -46,8 +46,7 @@ module.exports = {
       test: /\.css/,
       loader: Extract.extract(
         'style',
-        'css?module&importLoaders=1&localIdentName=[hash:3]',
-        'postcss'
+        'css?module&importLoaders=1&localIdentName=[hash:3]!postcss'
       ),
     }, {
       test: /\.(png|jpe?g)$/,
