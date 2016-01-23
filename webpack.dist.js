@@ -1,5 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
+var path = require('path')
+var webpack = require('webpack')
+var Extract = require('extract-text-webpack-plugin')
 
 module.exports = {
   devtool: 'source-map',
@@ -24,6 +25,7 @@ module.exports = {
       compressor: { warnings: false },
       include: /\.min\./,
     }),
+    new Extract('styles.min.bundle.css'),
   ],
   resolve: {
     modulesDirectories: ['app', 'node_modules'],
@@ -33,6 +35,7 @@ module.exports = {
     require('postcss-nested'),
     require('postcss-custom-properties'),
     require('postcss-color-function'),
+    require('cssnano'),
   ],
   module: {
     loaders: [{
@@ -41,11 +44,11 @@ module.exports = {
       exclude: /node_modules/,
     }, {
       test: /\.css/,
-      loaders: [
+      loader: Extract.extract(
         'style',
         'css?module&importLoaders=1&localIdentName=[hash:3]',
-        'postcss',
-      ],
+        'postcss'
+      ),
     }, {
       test: /\.(png|jpe?g)$/,
       loaders: ['file'],
