@@ -4,7 +4,7 @@ Simple, customizable, unopinionated autocomplete wrapper for React.
 
 ## Demo
 
-bendyorke.com/react-simple-autocomplete
+[bendyorke.com/react-simple-autocomplete](http://bendyorke.com/react-simple-autocomplete)
 
 ## What does this library try to solve?
 
@@ -32,7 +32,7 @@ Output with menu open & first item highlighted:
 <div>
   <input type="text" />
   <ul>
-    <li><em>one</em></li>
+    <em><li>one</li></em>
     <li>two</li>
   </ul>
 </div>
@@ -82,7 +82,7 @@ Filter function to decide which items are possible choices.  Called on each item
 
 #### `sort: (a: Any, b: Any) -> Number`
 
-Sort function to be called on the remaining items after the filter function.  Defaults to no sort (`() => {}`).  
+Sort function to be called on the remaining items after the filter function.  Defaults to no sort (`() => {}`).
 
 Can also pass `undefined`, `null`, or `false` to use the default `Array.sort()` method.
 
@@ -103,8 +103,9 @@ Function used to render the menu.  Gives you full control to style your menu, us
 Function used to render each individual item.  Gives you full control to style your item, apply conditional logic if the item is highlighted, and mutate the items display value.  Items are passed as named parameters to support stateless functional components.  Defaults to:
 
 ```js
-({item, highlighted}) =>
-  <li>{highlighted ? <em>{item}</em> : item}</li>
+({item, highlighted}) => highlighted
+  ? <em><li>{items}</li></em>
+  : <li>{items}</li>
 ```
 
 #### `onSelectItem: ({item: Any, event: React.SyntheticEvent}) -> Any`
