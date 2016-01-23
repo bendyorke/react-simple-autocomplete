@@ -79,6 +79,7 @@
     top: 100%;
     width: 100%;
     box-sizing: border-box;
+    z-index: 100;
   }
 
   li {
@@ -87,10 +88,11 @@
     box-sizing: border-box;
   }
 
-  li em {
+  em li {
+    background: var(--purple);
+    color: white;
     font-style: normal;
     font-weight: 600;
-    color: var(--purple);
   }
 
   li:hover {
@@ -139,4 +141,11 @@
 
 .item:hover {
   cursor: pointer;
+}
+
+.stream {
+  composes: item;
+  color: #CCC;
+  font-style: italic;
+  text-align: center;
 }

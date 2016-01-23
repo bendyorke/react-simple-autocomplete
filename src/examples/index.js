@@ -25,7 +25,12 @@ class App extends Component {
         <Autocomplete
           className={styles.menu}
           items={['Row', 'Row', 'Row your boat']}
-          renderMenu={({items}) => <div className={styles.renderMenu}>{items}</div>}
+          renderMenu={({items}) =>
+            <div className={styles.renderMenu}>
+              {items}
+              <div className={styles.stream}>Gently down the stream!</div>
+            </div>
+          }
           renderItem={({item, highlighted}) =>
             <div className={highlighted ? styles.activeItem : styles.item}>{item}!</div>} >
           <input placeholder="Ahoy, captain!" />
@@ -35,7 +40,8 @@ class App extends Component {
         <code className={styles.code}>
           {`<Autocomplete`}<br />
           &nbsp;&nbsp;{`items={['Row', 'Row', 'Row your boat']}`}<br />
-          &nbsp;&nbsp;{`renderMenu={({items}) => <div className='menu'>{items}</div>}`}<br />
+          &nbsp;&nbsp;{`renderMenu={({items}) =>`}<br />
+          &nbsp;&nbsp;&nbsp;&nbsp;{`<div className='menu'>{items}<div>Gently down the stream!</div></div>}`}<br />
           &nbsp;&nbsp;{`renderItem={({item, highlighted}) =>`}<br />
           &nbsp;&nbsp;&nbsp;&nbsp;{`<div className={highlighted ? 'active-item' : 'item'}>{item}!</div>} />`}<br />
           &nbsp;&nbsp;{`<input placeholder="Ahoy, captain!" />`}<br />

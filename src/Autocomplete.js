@@ -19,8 +19,9 @@ class Autocomplete extends Component {
     filter: (item, query) => item.toLowerCase().includes(query.toLowerCase()),
     sort: () => {},
     renderMenu: ({items}) => <ul>{items}</ul>,
-    renderItem: ({item, highlighted}) =>
-      <li>{highlighted ? <em>{item}</em> : item}</li>,
+    renderItem: ({item, highlighted}) => highlighted
+      ? <em><li>{item}</li></em>
+      : <li>{item}</li>,
     children: <input type="text" />,
   };
 

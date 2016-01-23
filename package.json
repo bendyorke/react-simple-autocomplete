@@ -2,16 +2,23 @@
   "name": "react-simple-autocomplete",
   "version": "1.0.0",
   "description": "A simple, customizable wrapper to provide autocomplete functionality to inputs",
-  "main": "dist/index.js",
+  "main": "build/simple-autocomplete.min.js",
   "scripts": {
-    "clean": "rimraf dist",
+    "clean": "rimraf dist && rimraf build",
     "lint": "eslint src",
-    "start": "node server.dev.js",
-    "build": "npm run clean && NODE_ENV=prod webpack --progress --config webpack.config.prod.js",
-    "test": "NODE_ENV=test mocha --opts mocha.opts src/**/*-tests.js"
+    "prebuild": "npm run clean",
+    "build": "cross-env NODE_ENV=prod npm run build:dist && npm run build:umd",
+    "build:umd": "webpack --progress --config=webpack.umd.js",
+    "build:dist": "webpack --progress --config=webpack.dist.js",
+    "test": "NODE_ENV=test mocha --opts mocha.opts src/**/*-tests.js",
+    "start": "node server.dev.js"
   },
   "author": "Ben Yorke",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/bendyorke/react-simple-autocomplete.git"
+  },
   "dependencies": {
     "react": "^0.14.6",
     "react-dom": "^0.14.6"
@@ -27,6 +34,7 @@
     "babel-preset-react-hmre": "^1.0.1",
     "babel-preset-stage-0": "^6.3.13",
     "chai": "^3.4.1",
+    "cross-env": "^1.0.7",
     "css-loader": "^0.23.1",
     "eslint": "^1.10.3",
     "eslint-plugin-babel": "^3.0.0",

@@ -2,31 +2,32 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-  devtool: 'source-map',
   entry: {
-    examples: [
-      'webpack-hot-middleware/client',
-      path.join(__dirname, 'src/examples'),
-    ],
-    autocomplete: path.join(__dirname, 'src'),
+    'simple-autocomplete': path.join(__dirname, 'src'),
+    'simple-autocomplete.min': path.join(__dirname, 'src'),
   },
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: '[name].bundle.js',
+    path: path.join(__dirname, 'build'),
+    filename: '[name].js',
     publicPath: '/static/',
+    library: 'SimpleAutocomplete',
+    libraryTarget: 'umd',
+  },
+  externals: {
+    'react': 'React',
+    'react-dom': 'ReactDOM',
   },
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify('production')
-      }
+        'NODE_ENV': JSON.stringify('production'),
+      },
     }),
     new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        warnings: false
-      }
-    })
+      compressor: { warnings: false },
+      include: /\.min\./,
+    }),
   ],
   resolve: {
     modulesDirectories: ['app', 'node_modules'],
