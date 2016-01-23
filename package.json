@@ -1,6 +1,6 @@
 {
   "name": "react-simple-autocomplete",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A simple, customizable wrapper to provide autocomplete functionality to inputs",
   "main": "build/simple-autocomplete.min.js",
   "scripts": {
@@ -11,8 +11,7 @@
     "build:umd": "webpack --progress --config=webpack.umd.js",
     "build:dist": "webpack --progress --config=webpack.dist.js",
     "test": "NODE_ENV=test mocha --opts mocha.opts src/**/*-tests.js",
-    "start": "node server.dev.js",
-    "postpublish": "curl https://npmcdn.com/react-simple-autocomplete@$npm_package_version"
+    "start": "node server.dev.js"
   },
   "author": "Ben Yorke",
   "license": "ISC",
