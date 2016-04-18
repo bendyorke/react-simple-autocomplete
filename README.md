@@ -19,7 +19,7 @@ npmcdm:
 
 ## Demo
 
-[bendyorke.com/react-simple-autocomplete](http://bendyorke.com/react-simple-autocomplete)
+[bendyorke.github.io/react-simple-autocomplete](http://bendyorke.github.io/react-simple-autocomplete)
 
 ## What does this library try to solve?
 
