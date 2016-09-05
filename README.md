@@ -14,7 +14,7 @@ npmcdm:
 
 ```html
 <!-- <SimpleAutocomplete /> -->
-<script src="//npmcdn.com/react-simple-autocomplete"></script>
+<script src="//unpkg.com/react-simple-autocomplete"></script>
 ```
 
 ## Demo
