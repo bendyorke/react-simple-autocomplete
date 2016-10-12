@@ -9,6 +9,7 @@ class Autocomplete extends Component {
     renderMenu: PropTypes.func,
     renderItem: PropTypes.func,
     onSelectItem: PropTypes.func,
+    onChange: PropTypes.func,
     onFocus: PropTypes.func,
     onBlur: PropTypes.func,
     children: PropTypes.element,
@@ -71,6 +72,7 @@ class Autocomplete extends Component {
     this._blur = false
   };
 
+
   // item
   handleSelectItem = item => event => {
     const { onSelectItem } = this.props
@@ -104,6 +106,13 @@ class Autocomplete extends Component {
   };
 
   // children
+  handleChange = event => {
+    const { onChange } = this.props;
+    const { input } = this.refs;
+    
+    onChange && onChange(event, input.value)
+  };
+  
   // children
   handleFocus = event => {
     const { onFocus } = this.props
@@ -189,6 +198,7 @@ class Autocomplete extends Component {
         {React.cloneElement(children, {
           onKeyDown: this.handleKeyDown,
           onFocus: this.handleFocus,
+          onChange: this.handleChange,
           onBlur: this.handleBlur,
           ref: 'input',
         })}
