@@ -64,11 +64,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(2);
 
@@ -88,7 +88,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  _inherits(Autocomplete, _Component);
 
 	  function Autocomplete() {
-	    var _Object$getPrototypeO;
+	    var _ref;
 
 	    var _temp, _this, _ret;
 
@@ -98,7 +98,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      args[_key] = arguments[_key];
 	    }
 
-	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Autocomplete)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Autocomplete.__proto__ || Object.getPrototypeOf(Autocomplete)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
 	      open: false,
 	      highlighted: -1
 	    }, _this.open = function () {
@@ -143,13 +143,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	          _this.close();
 	        });
 	      };
+	    }, _this.handleChange = function (event) {
+	      var onChange = _this.props.onChange;
+	      var input = _this.refs.input;
+
+
+	      onChange && onChange(event, input.value);
 	    }, _this.handleFocus = function (event) {
 	      var onFocus = _this.props.onFocus;
+
 
 	      _this.open();
 	      onFocus && onFocus(event);
 	    }, _this.handleBlur = function (event) {
 	      var onBlur = _this.props.onBlur;
+
 
 	      if (!_this._blur) return;
 
@@ -157,6 +165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      onBlur && onBlur(event);
 	    }, _this.handleKeyDown = function (event) {
 	      var highlighted = _this.state.highlighted;
+
 
 	      _this.open();
 
@@ -202,16 +211,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    // menu
 
-	    // item
 
 	    // item
 
+
 	    // item
 
-	    // children
-	    // children
+
+	    // item
+
 
 	    // children
+
+
+	    // children
+
+
+	    // children
+
 
 	    // children
 
@@ -250,6 +267,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _react2.default.cloneElement(children, {
 	          onKeyDown: this.handleKeyDown,
 	          onFocus: this.handleFocus,
+	          onChange: this.handleChange,
 	          onBlur: this.handleBlur,
 	          ref: 'input'
 	        }),
@@ -270,10 +288,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var sort = _props2.sort;
 	      var limit = _props2.limit;
 
-	      var _ref = this.refs.input || {};
+	      var _ref2 = this.refs.input || {};
 
-	      var _ref$value = _ref.value;
-	      var value = _ref$value === undefined ? '' : _ref$value;
+	      var _ref2$value = _ref2.value;
+	      var value = _ref2$value === undefined ? '' : _ref2$value;
+
 
 	      return items.filter(function (item) {
 	        return filter(item, value);
@@ -292,6 +311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  renderMenu: _react.PropTypes.func,
 	  renderItem: _react.PropTypes.func,
 	  onSelectItem: _react.PropTypes.func,
+	  onChange: _react.PropTypes.func,
 	  onFocus: _react.PropTypes.func,
 	  onBlur: _react.PropTypes.func,
 	  children: _react.PropTypes.element
@@ -302,17 +322,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return item.toLowerCase().includes(query.toLowerCase());
 	  },
 	  sort: function sort() {},
-	  renderMenu: function renderMenu(_ref2) {
-	    var items = _ref2.items;
+	  renderMenu: function renderMenu(_ref3) {
+	    var items = _ref3.items;
 	    return _react2.default.createElement(
 	      'ul',
 	      null,
 	      items
 	    );
 	  },
-	  renderItem: function renderItem(_ref3) {
-	    var item = _ref3.item;
-	    var highlighted = _ref3.highlighted;
+	  renderItem: function renderItem(_ref4) {
+	    var item = _ref4.item;
+	    var highlighted = _ref4.highlighted;
 	    return highlighted ? _react2.default.createElement(
 	      'em',
 	      null,
