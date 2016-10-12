@@ -111,7 +111,7 @@ Limit your results to a specific number.  Defaults to `undefined`.
 
 #### `submitOnSelect: bool`
 
-Whether onSubmit will be called when an item is selected. The default is `true`.
+Whether `onSubmit` will be called when an item is selected. The default is `true`.
 
 #### `onlyAllowsValueInItems: bool`
 
