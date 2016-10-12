@@ -12,7 +12,7 @@ class Autocomplete extends Component {
     onChange: PropTypes.func,
     onFocus: PropTypes.func,
     onBlur: PropTypes.func,
-    onSave: PropType.func,
+    onSave: PropTypes.func,
     children: PropTypes.element,
   };
 

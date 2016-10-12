@@ -10768,7 +10768,7 @@
 	  onChange: _react.PropTypes.func,
 	  onFocus: _react.PropTypes.func,
 	  onBlur: _react.PropTypes.func,
-	  onSave: PropType.func,
+	  onSave: _react.PropTypes.func,
 	  children: _react.PropTypes.element
 	};
 	Autocomplete.defaultProps = {
