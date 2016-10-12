@@ -12,6 +12,7 @@ class Autocomplete extends Component {
     onChange: PropTypes.func,
     onFocus: PropTypes.func,
     onBlur: PropTypes.func,
+    onSave: PropType.func,
     children: PropTypes.element,
   };
 
@@ -154,6 +155,11 @@ class Autocomplete extends Component {
       event.preventDefault()
       if (highlighted > -1) {
         this.handleSelectItem(this.items[highlighted])(event)
+      }
+      else {
+	  const { onSave } = this.props
+          const { input } = this.refs
+          onSave && onSave(input.value)
       }
       return
 

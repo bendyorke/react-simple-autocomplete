@@ -10635,6 +10635,11 @@
 	          event.preventDefault();
 	          if (highlighted > -1) {
 	            _this.handleSelectItem(_this.items[highlighted])(event);
+	          } else {
+	            var onSave = _this.props.onSave;
+	            var input = _this.refs.input;
+	
+	            onSave && onSave(input.value);
 	          }
 	          return;
 	
@@ -10763,6 +10768,7 @@
 	  onChange: _react.PropTypes.func,
 	  onFocus: _react.PropTypes.func,
 	  onBlur: _react.PropTypes.func,
+	  onSave: PropType.func,
 	  children: _react.PropTypes.element
 	};
 	Autocomplete.defaultProps = {
