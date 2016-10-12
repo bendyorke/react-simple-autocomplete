@@ -14,6 +14,7 @@ class Autocomplete extends Component {
     onFocus: PropTypes.func,
     onBlur: PropTypes.func,
     onSubmit: PropTypes.func,   // onSubmit will be called when an item is selected or when users hit enter with self-defined value
+    submitOnSelect: PropTypes.bool,
     onlyAllowsValueInItems: PropTypes.bool,
     children: PropTypes.element,
   };
@@ -21,6 +22,7 @@ class Autocomplete extends Component {
   static defaultProps = {
     defaultInputValue: '',
     items: [],
+    submitOnSelect: true, // call onSubmit when an item is selected
     onlyAllowsValueInItems: false,  // if user enter a value that is not in the items, the onSubmit function will not be triggered.
     filter: (item, query) => item.toLowerCase().includes(query.toLowerCase()),
     sort: () => {},
@@ -83,13 +85,13 @@ class Autocomplete extends Component {
 
   // item
   handleMouseDown = () => {
-    this._blur = false
+    this._blur = false    
   };
 
 
   // item
   handleSelectItem = item => event => {
-    const { onSelectItem, onSubmit } = this.props
+    const { onSelectItem, onSubmit, submitOnSelect } = this.props
     const { input } = this.refs
 
     if (item){
@@ -110,10 +112,13 @@ class Autocomplete extends Component {
           input.dispatchEvent(changeEvent)
         }
         
-        // call save function
-        onSubmit && onSubmit(input.value);
-    }
-    
+        if (submitOnSelect){
+            // call save function
+            onSubmit && onSubmit(input.value);    
+        }
+        this.setState({ highlighted: -1 })  // Once the item is selected, remove the highlighted
+    }  
+       
 
     /**
      * Close the menu and allow blur events
@@ -176,7 +181,7 @@ class Autocomplete extends Component {
     case 'Enter':
       event.preventDefault()
       if (highlighted > -1) {
-        this.handleSelectItem(this.items[highlighted])(event)        
+        this.handleSelectItem(this.items[highlighted])(event)                
       } else if (!onlyAllowsValueInItems) {
         onSubmit && onSubmit(input.value)
       }    
