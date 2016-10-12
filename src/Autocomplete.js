@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 
 class Autocomplete extends Component {
   static propTypes = {
+    defaultInputValue: PropTypes.any,  
     items: PropTypes.array,
     filter: PropTypes.func,
     sort: PropTypes.any,
@@ -12,12 +13,15 @@ class Autocomplete extends Component {
     onChange: PropTypes.func,
     onFocus: PropTypes.func,
     onBlur: PropTypes.func,
-    onSave: PropTypes.func,
+    onSubmit: PropTypes.func,   // onSubmit will be called when an item is selected or when users hit enter with self-defined value
+    onlyAllowsValueInItems: PropTypes.bool,
     children: PropTypes.element,
   };
 
   static defaultProps = {
+    defaultInputValue: '',
     items: [],
+    onlyAllowsValueInItems: false,  // if user enter a value that is not in the items, the onSubmit function will not be triggered.
     filter: (item, query) => item.toLowerCase().includes(query.toLowerCase()),
     sort: () => {},
     renderMenu: ({items}) => <ul>{items}</ul>,
@@ -49,6 +53,15 @@ class Autocomplete extends Component {
   componentWillMount() {
     this._blur = true
   };
+  
+  componentDidMount() {
+      const { defaultInputValue } = this.props;
+      const { input } = this.refs;
+       
+      if ( defaultInputValue ) {
+          input.value = defaultInputValue;
+      }        
+  }
 
   open = () => {
     this.setState({open: true})
@@ -76,24 +89,31 @@ class Autocomplete extends Component {
 
   // item
   handleSelectItem = item => event => {
-    const { onSelectItem } = this.props
+    const { onSelectItem, onSubmit } = this.props
     const { input } = this.refs
 
-    /**
-     * If there is no onSelectItem, just update the value
-     */
-    const selectHandler = onSelectItem
-      ? onSelectItem(item, event)
-      : input.value = item
+    if (item){
+        /**
+         * call onSelectItem if it exists
+         */
+        const selectHandler = onSelectItem && onSelectItem(item, event);
+        
+        // update the input value
+        input.value = item
 
-    /**
-     * After updating the value, we need to trigger an onChange event.
-     * Can also trigger by returning true in onSelectItem
-     */
-    if (selectHandler) {
-      const changeEvent = new Event('input', { bubbles: true })
-      input.dispatchEvent(changeEvent)
+        /**
+         * After updating the value, we need to trigger an onChange event.
+         * Can also trigger by returning true in onSelectItem
+         */
+        if (selectHandler) {      
+          const changeEvent = new Event('input', { bubbles: true })
+          input.dispatchEvent(changeEvent)
+        }
+        
+        // call save function
+        onSubmit && onSubmit(input.value);
     }
+    
 
     /**
      * Close the menu and allow blur events
@@ -135,6 +155,8 @@ class Autocomplete extends Component {
   // children
   handleKeyDown = event => {
     const { highlighted } = this.state
+    const { onSubmit, onlyAllowsValueInItems } = this.props
+    const { input } = this.refs
 
     this.open()
 
@@ -154,13 +176,11 @@ class Autocomplete extends Component {
     case 'Enter':
       event.preventDefault()
       if (highlighted > -1) {
-        this.handleSelectItem(this.items[highlighted])(event)
-      }
-      else {
-	  const { onSave } = this.props
-          const { input } = this.refs
-          onSave && onSave(input.value)
-      }
+        this.handleSelectItem(this.items[highlighted])(event)        
+      } else if (!onlyAllowsValueInItems) {
+        onSubmit && onSubmit(input.value)
+      }    
+	  
       return
 
     case 'Escape':
@@ -175,7 +195,7 @@ class Autocomplete extends Component {
   };
 
   render() {
-    const {
+    const {      
       children,
       items,
       filter,
@@ -205,7 +225,7 @@ class Autocomplete extends Component {
           onKeyDown: this.handleKeyDown,
           onFocus: this.handleFocus,
           onChange: this.handleChange,
-          onBlur: this.handleBlur,
+          onBlur: this.handleBlur,          
           ref: 'input',
         })}
 

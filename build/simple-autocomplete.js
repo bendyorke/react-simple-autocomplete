@@ -115,22 +115,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	      _this._blur = false;
 	    }, _this.handleSelectItem = function (item) {
 	      return function (event) {
-	        var onSelectItem = _this.props.onSelectItem;
+	        var _this$props = _this.props;
+	        var onSelectItem = _this$props.onSelectItem;
+	        var onSubmit = _this$props.onSubmit;
 	        var input = _this.refs.input;
 
-	        /**
-	         * If there is no onSelectItem, just update the value
-	         */
 
-	        var selectHandler = onSelectItem ? onSelectItem(item, event) : input.value = item;
+	        if (item) {
+	          /**
+	           * call onSelectItem if it exists
+	           */
+	          var selectHandler = onSelectItem && onSelectItem(item, event);
 
-	        /**
-	         * After updating the value, we need to trigger an onChange event.
-	         * Can also trigger by returning true in onSelectItem
-	         */
-	        if (selectHandler) {
-	          var changeEvent = new Event('input', { bubbles: true });
-	          input.dispatchEvent(changeEvent);
+	          // update the input value
+	          input.value = item;
+
+	          /**
+	           * After updating the value, we need to trigger an onChange event.
+	           * Can also trigger by returning true in onSelectItem
+	           */
+	          if (selectHandler) {
+	            var changeEvent = new Event('input', { bubbles: true });
+	            input.dispatchEvent(changeEvent);
+	          }
+
+	          // call save function
+	          onSubmit && onSubmit(input.value);
 	        }
 
 	        /**
@@ -165,6 +175,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      onBlur && onBlur(event);
 	    }, _this.handleKeyDown = function (event) {
 	      var highlighted = _this.state.highlighted;
+	      var _this$props2 = _this.props;
+	      var onSubmit = _this$props2.onSubmit;
+	      var onlyAllowsValueInItems = _this$props2.onlyAllowsValueInItems;
+	      var input = _this.refs.input;
 
 
 	      _this.open();
@@ -186,12 +200,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	          event.preventDefault();
 	          if (highlighted > -1) {
 	            _this.handleSelectItem(_this.items[highlighted])(event);
-	          } else {
-	            var onSave = _this.props.onSave;
-	            var input = _this.refs.input;
-
-	            onSave && onSave(input.value);
+	          } else if (!onlyAllowsValueInItems) {
+	            onSubmit && onSubmit(input.value);
 	          }
+
 	          return;
 
 	        case 'Escape':
@@ -212,6 +224,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    key: 'componentWillMount',
 	    value: function componentWillMount() {
 	      this._blur = true;
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var defaultInputValue = this.props.defaultInputValue;
+	      var input = this.refs.input;
+
+
+	      if (defaultInputValue) {
+	        input.value = defaultInputValue;
+	      }
 	    }
 
 	    // menu
@@ -309,6 +332,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}(_react.Component);
 
 	Autocomplete.propTypes = {
+	  defaultInputValue: _react.PropTypes.any,
 	  items: _react.PropTypes.array,
 	  filter: _react.PropTypes.func,
 	  sort: _react.PropTypes.any,
@@ -319,11 +343,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  onChange: _react.PropTypes.func,
 	  onFocus: _react.PropTypes.func,
 	  onBlur: _react.PropTypes.func,
-	  onSave: _react.PropTypes.func,
+	  onSubmit: _react.PropTypes.func, // onSubmit will be called when an item is selected or when users hit enter with self-defined value
+	  onlyAllowsValueInItems: _react.PropTypes.bool,
 	  children: _react.PropTypes.element
 	};
 	Autocomplete.defaultProps = {
+	  defaultInputValue: '',
 	  items: [],
+	  onlyAllowsValueInItems: false, // if user enter a value that is not in the items, the onSubmit function will not be triggered.
 	  filter: function filter(item, query) {
 	    return item.toLowerCase().includes(query.toLowerCase());
 	  },
