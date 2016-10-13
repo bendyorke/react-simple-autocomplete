@@ -10620,12 +10620,13 @@
 	      onFocus && onFocus(event);
 	    }, _this.handleBlur = function (event) {
 	      var onBlur = _this.props.onBlur;
+	      var input = _this.refs.input;
 	
 	
 	      if (!_this._blur) return;
 	
 	      _this.close();
-	      onBlur && onBlur(event);
+	      onBlur && onBlur(event, input.value);
 	    }, _this.handleKeyDown = function (event) {
 	      var highlighted = _this.state.highlighted;
 	      var _this$props2 = _this.props;
@@ -10719,6 +10720,7 @@
 	      var _this2 = this;
 	
 	      var _props = this.props;
+	      var placeholder = _props.placeholder;
 	      var children = _props.children;
 	      var items = _props.items;
 	      var filter = _props.filter;
@@ -10726,7 +10728,7 @@
 	      var Menu = _props.renderMenu;
 	      var Item = _props.renderItem;
 	
-	      var props = _objectWithoutProperties(_props, ['children', 'items', 'filter', 'sort', 'renderMenu', 'renderItem']);
+	      var props = _objectWithoutProperties(_props, ['placeholder', 'children', 'items', 'filter', 'sort', 'renderMenu', 'renderItem']);
 	
 	      var renderedItems = this.items.map(function (item, index) {
 	        var highlighted = _this2.state.highlighted === index;
@@ -10750,6 +10752,7 @@
 	          onFocus: this.handleFocus,
 	          onChange: this.handleChange,
 	          onBlur: this.handleBlur,
+	          placeholder: placeholder,
 	          ref: 'input'
 	        }),
 	        this.state.open && renderedMenu
@@ -10785,6 +10788,7 @@
 	}(_react.Component);
 	
 	Autocomplete.propTypes = {
+	  placeholder: _react.PropTypes.string,
 	  defaultInputValue: _react.PropTypes.any,
 	  items: _react.PropTypes.array,
 	  filter: _react.PropTypes.func,
@@ -10802,6 +10806,7 @@
 	  children: _react.PropTypes.element
 	};
 	Autocomplete.defaultProps = {
+	  placeholder: 'Enter a value',
 	  defaultInputValue: '',
 	  items: [],
 	  submitOnSelect: true, // call onSubmit when an item is selected

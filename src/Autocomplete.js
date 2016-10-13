@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react'
 
 class Autocomplete extends Component {
   static propTypes = {
+    placeholder: PropTypes.string, 
     defaultInputValue: PropTypes.any,  
     items: PropTypes.array,
     filter: PropTypes.func,
@@ -20,6 +21,7 @@ class Autocomplete extends Component {
   };
 
   static defaultProps = {
+    placeholder: 'Enter a value',
     defaultInputValue: '',
     items: [],
     submitOnSelect: true, // call onSubmit when an item is selected
@@ -152,11 +154,12 @@ class Autocomplete extends Component {
   // children
   handleBlur = event => {
     const { onBlur } = this.props
+    const { input } = this.refs
 
     if (!this._blur) return
 
     this.close()
-    onBlur && onBlur(event)
+    onBlur && onBlur(event, input.value)
   };
 
   // children
@@ -203,6 +206,7 @@ class Autocomplete extends Component {
 
   render() {
     const {      
+      placeholder,
       children,
       items,
       filter,
@@ -232,7 +236,8 @@ class Autocomplete extends Component {
           onKeyDown: this.handleKeyDown,
           onFocus: this.handleFocus,
           onChange: this.handleChange,
-          onBlur: this.handleBlur,          
+          onBlur: this.handleBlur,        
+          placeholder: placeholder,           
           ref: 'input',
         })}
 
