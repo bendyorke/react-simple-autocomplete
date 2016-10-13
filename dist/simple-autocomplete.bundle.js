@@ -10651,7 +10651,7 @@
 	
 	        case 'Enter':
 	          event.preventDefault();
-	          if (highlighted > -1) {
+	          if (_this.items.length > 0 && highlighted > -1) {
 	            _this.handleSelectItem(_this.items[highlighted])(event);
 	          } else if (!onlyAllowsValueInItems) {
 	            onSubmit && onSubmit(input.value);

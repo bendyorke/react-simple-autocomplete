@@ -182,7 +182,7 @@ class Autocomplete extends Component {
 
     case 'Enter':
       event.preventDefault()
-      if (highlighted > -1) {
+      if (this.items.length > 0 && highlighted > -1) {
         this.handleSelectItem(this.items[highlighted])(event)                
       } else if (!onlyAllowsValueInItems) {
         onSubmit && onSubmit(input.value)
