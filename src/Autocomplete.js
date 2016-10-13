@@ -95,6 +95,8 @@ class Autocomplete extends Component {
     const { input } = this.refs
 
     if (item){
+        this.setState({ highlighted: -1 })  // Once the item is selected, remove the highlighted
+    
         /**
          * call onSelectItem if it exists
          */
@@ -111,24 +113,24 @@ class Autocomplete extends Component {
           const changeEvent = new Event('input', { bubbles: true })
           input.dispatchEvent(changeEvent)
         }
-        
-        if (submitOnSelect){
+              
+        /**
+         * Close the menu and allow blur events
+         * to continue,
+         */
+        setTimeout(() => {
+          input.focus()
+          this._blur = true
+          this.close()
+          if (submitOnSelect){
             // call save function
             onSubmit && onSubmit(input.value);    
-        }
-        this.setState({ highlighted: -1 })  // Once the item is selected, remove the highlighted
+          }       
+        })    
     }  
        
 
-    /**
-     * Close the menu and allow blur events
-     * to continue,
-     */
-    setTimeout(() => {
-      input.focus()
-      this._blur = true
-      this.close()
-    })
+    
   };
 
   // children

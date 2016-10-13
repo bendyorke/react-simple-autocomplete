@@ -123,6 +123,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	        if (item) {
+	          _this.setState({ highlighted: -1 }); // Once the item is selected, remove the highlighted
+
 	          /**
 	           * call onSelectItem if it exists
 	           */
@@ -140,22 +142,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	            input.dispatchEvent(changeEvent);
 	          }
 
-	          if (submitOnSelect) {
-	            // call save function
-	            onSubmit && onSubmit(input.value);
-	          }
-	          _this.setState({ highlighted: -1 }); // Once the item is selected, remove the highlighted
+	          /**
+	           * Close the menu and allow blur events
+	           * to continue,
+	           */
+	          setTimeout(function () {
+	            input.focus();
+	            _this._blur = true;
+	            _this.close();
+	            if (submitOnSelect) {
+	              // call save function
+	              onSubmit && onSubmit(input.value);
+	            }
+	          });
 	        }
-
-	        /**
-	         * Close the menu and allow blur events
-	         * to continue,
-	         */
-	        setTimeout(function () {
-	          input.focus();
-	          _this._blur = true;
-	          _this.close();
-	        });
 	      };
 	    }, _this.handleChange = function (event) {
 	      var onChange = _this.props.onChange;
