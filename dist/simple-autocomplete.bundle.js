@@ -2175,6 +2175,7 @@
 	 */
 	var EventInterface = {
 	  type: null,
+	  target: null,
 	  // currentTarget is set when dispatching; no use in copying it here
 	  currentTarget: emptyFunction.thatReturnsNull,
 	  eventPhase: null,
@@ -2208,8 +2209,6 @@
 	  this.dispatchConfig = dispatchConfig;
 	  this.dispatchMarker = dispatchMarker;
 	  this.nativeEvent = nativeEvent;
-	  this.target = nativeEventTarget;
-	  this.currentTarget = nativeEventTarget;
 	
 	  var Interface = this.constructor.Interface;
 	  for (var propName in Interface) {
@@ -2220,7 +2219,11 @@
 	    if (normalize) {
 	      this[propName] = normalize(nativeEvent);
 	    } else {
-	      this[propName] = nativeEvent[propName];
+	      if (propName === 'target') {
+	        this.target = nativeEventTarget;
+	      } else {
+	        this[propName] = nativeEvent[propName];
+	      }
 	    }
 	  }
 	
@@ -5305,7 +5308,7 @@
 	
 	'use strict';
 	
-	module.exports = '0.14.6';
+	module.exports = '0.14.8';
 
 /***/ },
 /* 40 */
@@ -9188,6 +9191,10 @@
 	  }
 	};
 	
+	function registerNullComponentID() {
+	  ReactEmptyComponentRegistry.registerNullComponentID(this._rootNodeID);
+	}
+	
 	var ReactEmptyComponent = function (instantiate) {
 	  this._currentElement = null;
 	  this._rootNodeID = null;
@@ -9196,7 +9203,7 @@
 	assign(ReactEmptyComponent.prototype, {
 	  construct: function (element) {},
 	  mountComponent: function (rootID, transaction, context) {
-	    ReactEmptyComponentRegistry.registerNullComponentID(rootID);
+	    transaction.getReactMountReady().enqueue(registerNullComponentID, this);
 	    this._rootNodeID = rootID;
 	    return ReactReconciler.mountComponent(this._renderedComponent, rootID, transaction, context);
 	  },
@@ -10506,11 +10513,11 @@
 
 	'use strict';
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(85);
 	
@@ -10530,7 +10537,7 @@
 	  _inherits(Autocomplete, _Component);
 	
 	  function Autocomplete() {
-	    var _Object$getPrototypeO;
+	    var _ref;
 	
 	    var _temp, _this, _ret;
 	
@@ -10540,7 +10547,7 @@
 	      args[_key] = arguments[_key];
 	    }
 	
-	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Autocomplete)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.state = {
+	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = Autocomplete.__proto__ || Object.getPrototypeOf(Autocomplete)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
 	      open: false,
 	      highlighted: -1
 	    }, _this.open = function () {
@@ -10557,48 +10564,76 @@
 	      _this._blur = false;
 	    }, _this.handleSelectItem = function (item) {
 	      return function (event) {
-	        var onSelectItem = _this.props.onSelectItem;
+	        var _this$props = _this.props;
+	        var onSelectItem = _this$props.onSelectItem;
+	        var onSubmit = _this$props.onSubmit;
+	        var submitOnSelect = _this$props.submitOnSelect;
 	        var input = _this.refs.input;
 	
-	        /**
-	         * If there is no onSelectItem, just update the value
-	         */
 	
-	        var selectHandler = onSelectItem ? onSelectItem(item, event) : input.value = item;
+	        if (item) {
+	          _this.setState({ highlighted: -1 }); // Once the item is selected, remove the highlighted
 	
-	        /**
-	         * After updating the value, we need to trigger an onChange event.
-	         * Can also trigger by returning true in onSelectItem
-	         */
-	        if (selectHandler) {
-	          var changeEvent = new Event('input', { bubbles: true });
-	          input.dispatchEvent(changeEvent);
+	          /**
+	           * call onSelectItem if it exists
+	           */
+	          var selectHandler = onSelectItem && onSelectItem(item, event);
+	
+	          // update the input value
+	          input.value = item;
+	
+	          /**
+	           * After updating the value, we need to trigger an onChange event.
+	           * Can also trigger by returning true in onSelectItem
+	           */
+	          if (selectHandler) {
+	            var changeEvent = new Event('input', { bubbles: true });
+	            input.dispatchEvent(changeEvent);
+	          }
+	
+	          /**
+	           * Close the menu and allow blur events
+	           * to continue,
+	           */
+	          setTimeout(function () {
+	            input.focus();
+	            _this._blur = true;
+	            _this.close();
+	            if (submitOnSelect) {
+	              // call save function
+	              onSubmit && onSubmit(input.value);
+	            }
+	          });
 	        }
-	
-	        /**
-	         * Close the menu and allow blur events
-	         * to continue,
-	         */
-	        setTimeout(function () {
-	          input.focus();
-	          _this._blur = true;
-	          _this.close();
-	        });
 	      };
+	    }, _this.handleChange = function (event) {
+	      var onChange = _this.props.onChange;
+	      var input = _this.refs.input;
+	
+	
+	      onChange && onChange(event, input.value);
 	    }, _this.handleFocus = function (event) {
 	      var onFocus = _this.props.onFocus;
+	
 	
 	      _this.open();
 	      onFocus && onFocus(event);
 	    }, _this.handleBlur = function (event) {
 	      var onBlur = _this.props.onBlur;
+	      var input = _this.refs.input;
+	
 	
 	      if (!_this._blur) return;
 	
 	      _this.close();
-	      onBlur && onBlur(event);
+	      onBlur && onBlur(event, input.value);
 	    }, _this.handleKeyDown = function (event) {
 	      var highlighted = _this.state.highlighted;
+	      var _this$props2 = _this.props;
+	      var onSubmit = _this$props2.onSubmit;
+	      var onlyAllowsValueInItems = _this$props2.onlyAllowsValueInItems;
+	      var input = _this.refs.input;
+	
 	
 	      _this.open();
 	
@@ -10617,9 +10652,12 @@
 	
 	        case 'Enter':
 	          event.preventDefault();
-	          if (highlighted > -1) {
+	          if (_this.items.length > 0 && highlighted > -1) {
 	            _this.handleSelectItem(_this.items[highlighted])(event);
+	          } else if (!onlyAllowsValueInItems) {
+	            onSubmit && onSubmit(input.value);
 	          }
+	
 	          return;
 	
 	        case 'Escape':
@@ -10641,19 +10679,38 @@
 	    value: function componentWillMount() {
 	      this._blur = true;
 	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var defaultInputValue = this.props.defaultInputValue;
+	      var input = this.refs.input;
+	
+	
+	      if (defaultInputValue) {
+	        input.value = defaultInputValue;
+	      }
+	    }
 	
 	    // menu
 	
-	    // item
 	
 	    // item
 	
+	
 	    // item
 	
-	    // children
-	    // children
+	
+	    // item
+	
 	
 	    // children
+	
+	
+	    // children
+	
+	
+	    // children
+	
 	
 	    // children
 	
@@ -10663,6 +10720,7 @@
 	      var _this2 = this;
 	
 	      var _props = this.props;
+	      var placeholder = _props.placeholder;
 	      var children = _props.children;
 	      var items = _props.items;
 	      var filter = _props.filter;
@@ -10670,7 +10728,7 @@
 	      var Menu = _props.renderMenu;
 	      var Item = _props.renderItem;
 	
-	      var props = _objectWithoutProperties(_props, ['children', 'items', 'filter', 'sort', 'renderMenu', 'renderItem']);
+	      var props = _objectWithoutProperties(_props, ['placeholder', 'children', 'items', 'filter', 'sort', 'renderMenu', 'renderItem']);
 	
 	      var renderedItems = this.items.map(function (item, index) {
 	        var highlighted = _this2.state.highlighted === index;
@@ -10692,7 +10750,9 @@
 	        _react2.default.cloneElement(children, {
 	          onKeyDown: this.handleKeyDown,
 	          onFocus: this.handleFocus,
+	          onChange: this.handleChange,
 	          onBlur: this.handleBlur,
+	          placeholder: placeholder,
 	          ref: 'input'
 	        }),
 	        this.state.open && renderedMenu
@@ -10712,10 +10772,11 @@
 	      var sort = _props2.sort;
 	      var limit = _props2.limit;
 	
-	      var _ref = this.refs.input || {};
+	      var _ref2 = this.refs.input || {};
 	
-	      var _ref$value = _ref.value;
-	      var value = _ref$value === undefined ? '' : _ref$value;
+	      var _ref2$value = _ref2.value;
+	      var value = _ref2$value === undefined ? '' : _ref2$value;
+	
 	
 	      return items.filter(function (item) {
 	        return filter(item, value);
@@ -10727,6 +10788,8 @@
 	}(_react.Component);
 	
 	Autocomplete.propTypes = {
+	  placeholder: _react.PropTypes.string,
+	  defaultInputValue: _react.PropTypes.any,
 	  items: _react.PropTypes.array,
 	  filter: _react.PropTypes.func,
 	  sort: _react.PropTypes.any,
@@ -10734,27 +10797,35 @@
 	  renderMenu: _react.PropTypes.func,
 	  renderItem: _react.PropTypes.func,
 	  onSelectItem: _react.PropTypes.func,
+	  onChange: _react.PropTypes.func,
 	  onFocus: _react.PropTypes.func,
 	  onBlur: _react.PropTypes.func,
+	  onSubmit: _react.PropTypes.func, // onSubmit will be called when an item is selected or when users hit enter with self-defined value
+	  submitOnSelect: _react.PropTypes.bool,
+	  onlyAllowsValueInItems: _react.PropTypes.bool,
 	  children: _react.PropTypes.element
 	};
 	Autocomplete.defaultProps = {
+	  placeholder: 'Enter a value',
+	  defaultInputValue: '',
 	  items: [],
+	  submitOnSelect: true, // call onSubmit when an item is selected
+	  onlyAllowsValueInItems: false, // if user enter a value that is not in the items, the onSubmit function will not be triggered.
 	  filter: function filter(item, query) {
 	    return item.toLowerCase().includes(query.toLowerCase());
 	  },
 	  sort: function sort() {},
-	  renderMenu: function renderMenu(_ref2) {
-	    var items = _ref2.items;
+	  renderMenu: function renderMenu(_ref3) {
+	    var items = _ref3.items;
 	    return _react2.default.createElement(
 	      'ul',
 	      null,
 	      items
 	    );
 	  },
-	  renderItem: function renderItem(_ref3) {
-	    var item = _ref3.item;
-	    var highlighted = _ref3.highlighted;
+	  renderItem: function renderItem(_ref4) {
+	    var item = _ref4.item;
+	    var highlighted = _ref4.highlighted;
 	    return highlighted ? _react2.default.createElement(
 	      'em',
 	      null,
@@ -15566,7 +15637,10 @@
 	      }
 	    });
 	
-	    nativeProps.children = content;
+	    if (content) {
+	      nativeProps.children = content;
+	    }
+	
 	    return nativeProps;
 	  }
 	

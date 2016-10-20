@@ -83,6 +83,10 @@ Retrieve the items that are currently available as options
 
 ### Props:
 
+#### `defaultInputValue: [Any]`
+
+Default input value. It is set to be an empty string by default.
+
 #### `items: [Any]`
 
 The items prop is an array the different possible matches.  It can be an array of any type, however only strings are supported by the default `filter` prop.
@@ -104,6 +108,14 @@ Can also pass `undefined`, `null`, or `false` to use the default `Array.sort()` 
 #### `limit: Number`
 
 Limit your results to a specific number.  Defaults to `undefined`.
+
+#### `submitOnSelect: bool`
+
+Whether `onSubmit` will be called when an item is selected. The default is `true`.
+
+#### `onlyAllowsValueInItems: bool`
+
+Whether the input is restricted to vaule in items. The default is `false`.
 
 #### `renderMenu: ({items: [Any]}) -> Element`
 
@@ -127,7 +139,15 @@ Function used to render each individual item.  Gives you full control to style y
 
 Callback called when an item is selected (either onClick, or onKeyDown: Enter when an element is highlighted).
 
-By default Autocomplete will update the input value onClick.  If you provide a `onSelectItem` handler, you must return a truthy value to keep this behavior.  If you return `undefined` or any other falsey value it will stop the default event handler.
+The input value will be updated to the selected item value no matter this function is defined or not.
+
+#### `onChange: (event: React.SyntheticEvent, value: [Any]})`
+
+Callback function of the input field
+
+#### `onSubmit: (value: [Any]})`
+
+Callback function when user hit Enter key. It will also be triggered if `submitOnSelect` is `true`.
 
 #### `onFocus: ({event: React.SyntheticEvent}) -> Any`
 
