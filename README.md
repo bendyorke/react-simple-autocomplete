@@ -10,7 +10,7 @@ npm:
 $ npm install --save react-simple-autocomplete
 ```
 
-npmcdm:
+npmcdn:
 
 ```html
 <!-- <SimpleAutocomplete /> -->
